@@ -1,0 +1,69 @@
+use shiro
+
+//用户表
+create table user(
+	uid	int(4) not null,
+	userName	varchar(12),
+	password	varchar(32),
+	constraint pk_uname primary key(userName)
+);
+
+insert into user(uid,userName,password) values(1,"gemingyi","123456");
+insert into user(uid,userName,password) values(2,"xiaoge","tearch");
+
+//角色表
+create table role(
+	rid	int(4) not null,
+	roleName	varchar(20),
+	constraint pk_rname primary key(roleName)
+);
+insert into role(rid,roleName) values(1,"admin");
+insert into role(rid,roleName) values(2,"tearch");
+update role set roleName = "tearch" where rid=2;
+
+//权限表
+create table permission(
+	pid	int(4) not null,
+	permissionName	varchar(20),
+	constraint pk_pname primary key(permissionName)
+);
+insert into permission(pid,permissionName) values(1,"user:*");
+insert into permission(pid,permissionName) values(2,"student:*");
+
+//用户角色表
+create table userRole(
+	uid	int(4),
+	rid	int(4),
+	constraint pk_uid primary key(uid,rid)
+);
+insert into userRole(uid,rid) values(1,1);
+insert into userRole(uid,rid) values(2,2);
+
+//角色权限表
+create table rolePermission(
+	rid	int(4),
+	pid	int(4),
+	constraint pk_rid primary key(rid,pid)
+);
+insert into rolePermission(rid,pid) values(1,1);
+insert into rolePermission(rid,pid) values(2,2);
+
+
+//根据用户名查询用户
+select * from user where userName = "gemingyi";
+
+//根据用户名查询角色
+select roleName 
+from user u,userRole ur,role r
+	where u.uid = ur.uid 
+	and  ur.rid = r.rid
+	and u.userName = "xiaoge";
+
+//根据用户名查询权限
+select permissionName 
+from user u, userRole ur, role r,rolePermission rp,permission p
+	where u.uid = ur.uid
+	and ur.rid = r.rid
+	and r.rid = rp.rid
+	and rp.pid = p.pid
+	and u.userName = "gemingyi";
