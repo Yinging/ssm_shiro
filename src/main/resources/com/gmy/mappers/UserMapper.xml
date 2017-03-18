@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gmy.dao.IUserDAO"> 
+
+	<resultMap id="UserResult" type="com.gmy.vo.User">
+		<result property="uid" column="uid" />
+		<result property="userName" column="userName" />
+		<result property="password" column="password" />
+	</resultMap>
+	
+	<select id="getByUserName" parameterType="String" resultMap="UserResult">
+		SELECT uid,userName,password FROM user WHERE userName = #{userName}
+	</select>
+	
+	<select id="getRoles" parameterType="String" resultType="String">
+		SELECT roleName 
+			FROM user u,userRole ur,role r
+			WHERE u.uid = ur.uid 
+				AND  ur.rid = r.rid
+				AND u.userName = #{userName}
+	</select>
+	
+	<select id="getPermissions" parameterType="String" resultType="String">
+		SELECT permissionName 
+			FROM user u, userRole ur, role r,rolePermission rp,permission p
+			WHERE u.uid = ur.uid
+				AND ur.rid = r.rid
+				AND r.rid = rp.rid
+				AND rp.pid = p.pid
+				AND u.userName = #{userName};
+	</select>
+	
+</mapper>
